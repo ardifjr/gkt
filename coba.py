@@ -4,7 +4,6 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from math import cos, sin, pi
 
-# Inisialisasi Pygame di bagian awal
 pygame.init()
 display = (800, 600)
 pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
