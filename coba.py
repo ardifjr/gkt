@@ -102,7 +102,7 @@ def draw_cloud(position):
     x, y, scale = position["x"], position["y"], position["scale"]
     glColor3f(1.0, 1.0, 1.0)  # Warna putih untuk awan
     
-    num_circles = 10  # Jumlah lingkaran kecil untuk membentuk awan
+    num_circles = 8  # Jumlah lingkaran kecil untuk membentuk awan
     circle_radius = 0.08  # Ukuran radius lingkaran kecil
     
     for i in range(num_circles):
@@ -114,7 +114,7 @@ def draw_cloud(position):
         
         num_segments = 50  # Jumlah segmen untuk lingkaran kecil
         for j in range(num_segments + 1):
-            angle = 2.0 * pi * j / num_segments
+            angle = 2 * pi * j / num_segments
             x_circle = circle_x + circle_radius * cos(angle) * scale
             y_circle = circle_y + circle_radius * sin(angle) * scale
             
@@ -252,8 +252,8 @@ def draw():
 
     pygame.display.flip()
 original_cloud_positions = [
-    {"x": -0.5, "y": 0.8, "original_scale": 0.8},
-    {"x": 0.0, "y": 0.9, "original_scale": 1.2},
+    {"x": -0.5, "y": 0.8, "original_scale": 0.3},
+    {"x": 0.0, "y": 0.9, "original_scale": 0.9},
     {"x": 0.7, "y": 0.7, "original_scale": 0.9},
     {"x": -0.8, "y": 0.6, "original_scale": 1.0},
     {"x": 0.4, "y": 0.5, "original_scale": 0.7},
