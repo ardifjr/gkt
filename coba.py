@@ -123,7 +123,7 @@ def draw_cloud(position):
 
 def draw_car(position):
     x, y, scale = position["x"], position["y"], position["scale"]
-    glColor3f(0.3, 0.3, 0.3)  # Warna abu-abu gelap untuk mobil
+    glColor3f(1.0, 0.0, 0.0)  # Warna abu-abu gelap untuk mobil
 
     # Badan mobil
     glBegin(GL_QUADS)
@@ -191,6 +191,18 @@ def draw_grass_with_snow():
         glVertex2f(x + 0.05 * scale, y - 0.6 * scale)  # Right bottom of snow pile
         glVertex2f(x, y - 0.5 * scale)  # Top of snow pile
         glEnd()
+        
+def draw_car_shadow(position):
+    x, y, scale = position["x"], position["y"], position["scale"]
+    glColor3f(0.2, 0.2, 0.2)  # Dark gray color for the shadow
+
+    glBegin(GL_QUADS)
+    glVertex2f(x - 0.40 * scale, -0.5)  # Shadow's bottom-left position
+    glVertex2f(x + 0.35 * scale, -0.5)  # Shadow's bottom-right position
+    glVertex2f(x + 0.40 * scale, -0.38)  # Shadow's top-right position
+    glVertex2f(x - 0.35 * scale, -0.38)  # Shadow's top-left position
+    glEnd()
+    
 def draw():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
@@ -211,6 +223,8 @@ def draw():
     # Gambar jalan
     draw_road()
     draw_grass_with_snow()
+    # Draw car shadow
+    draw_car_shadow(car_position)
     draw_car(car_position)
 
     # Update the car's position
