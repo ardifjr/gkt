@@ -38,22 +38,28 @@ def draw_grass():
     glVertex2f(-1, -1)
     glEnd()
 
-def draw_sun():
-    glColor3f(1.0, 1.0, 0.0)  # Warna kuning untuk matahari
+def draw_sun(rotation_angle):
+    glColor3f(1.0, 1.0, 0.0)  # Yellow color for the sun
+
+    glPushMatrix()  # Save the current matrix
+    glRotatef(rotation_angle, 0.0, 0.0, 1.0)  # Rotate around the Z-axis
+
     glBegin(GL_TRIANGLE_FAN)
-    glVertex2f(-0.85, 0.85)  # Koordinat tengah matahari yang diperbarui
-    num_segments = 50  # Mengurangi jumlah garis-garis
+    glVertex2f(-0.85, 0.85)  # Center coordinates of the sun
+    num_segments = 50  # Reduce the number of segments
     radius = 0.1
-    for i in range(num_segments+1):
+
+    for i in range(num_segments + 1):
         theta = 2.0 * pi * i / num_segments
         x = -0.85 + radius * cos(theta)
         y = 0.85 + radius * sin(theta)
         glVertex2f(x, y)
+
     glEnd()
 
-    # Tambahkan garis-garis kecil di sekitar matahari
-    glColor3f(1.0, 1.0, 0.0)  # Warna kuning untuk garis-garis matahari
-    glLineWidth(2.0)  # Ubah ketebalan garis-garis
+    glColor3f(1.0, 1.0, 0.0)  # Yellow color for sun rays
+    glLineWidth(2.0)
+
     glBegin(GL_LINES)
     for i in range(num_segments):
         theta = 2.0 * pi * i / num_segments
@@ -64,6 +70,8 @@ def draw_sun():
         glVertex2f(x1, y1)
         glVertex2f(x2, y2)
     glEnd()
+
+    glPopMatrix()  # Restore the previous matrix
 
 def draw_road():
     glColor3f(0.4, 0.4, 0.4)  # Warna abu-abu untuk jalan
@@ -178,7 +186,7 @@ def draw():
     glVertex2f(-1, 1)
     glEnd()
 
-    draw_sun()
+    draw_sun(rotation_angle)  # Pass the rotation_angle to draw_sun
     # Gambar rumput
     draw_grass()
     
@@ -214,7 +222,7 @@ def draw():
         draw_cloud(cloud_position)
 
     pygame.display.flip()
-
+rotation_angle = 0.0  # Initial rotation angle
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -222,5 +230,6 @@ while True:
             quit()
 
     draw()
-    
+    rotation_angle += -0.1  # Adjust the rotation speed as needed
+
     pygame.time.wait(10)
