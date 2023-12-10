@@ -109,10 +109,10 @@ def draw_car(position):
 
     # Badan mobil
     glBegin(GL_QUADS)
-    glVertex2f(x - 0.35 * scale, y + 0.15 * scale)  # Posisi kiri bawah
+    glVertex2f(x - 0.40 * scale, y + 0.15 * scale)  # Posisi kiri bawah
     glVertex2f(x + 0.35 * scale, y + 0.15 * scale)  # Posisi kanan bawah
-    glVertex2f(x + 0.35 * scale, y + 0.35 * scale)  # Posisi kanan atas
-    glVertex2f(x - 0.35 * scale, y + 0.35 * scale)  # Posisi kiri atas
+    glVertex2f(x + 0.40 * scale, y + 0.1 * scale)  # Posisi kanan atas
+    glVertex2f(x - 0.35 * scale, y + 0.1 * scale)  # Posisi kiri atas
     glEnd()
 
     # Roda mobil
@@ -126,8 +126,8 @@ def draw_car(position):
     # Jendela
     glColor3f(0.7, 0.9, 1.0)  # Warna biru muda untuk jendela
     glBegin(GL_QUADS)
-    glVertex2f(x - 0.2 * scale, y + 0.2 * scale)  # Posisi kiri bawah jendela
-    glVertex2f(x + 0.2 * scale, y + 0.2 * scale)  # Posisi kanan bawah jendela
+    glVertex2f(x - 0.3 * scale, y + 0.15 * scale)  # Posisi kiri bawah jendela
+    glVertex2f(x + 0.3 * scale, y + 0.15* scale)  # Posisi kanan bawah jendela
     glVertex2f(x + 0.2 * scale, y + 0.3 * scale)  # Posisi kanan atas jendela
     glVertex2f(x - 0.2 * scale, y + 0.3 * scale)  # Posisi kiri atas jendela
     glEnd()
@@ -136,10 +136,12 @@ def draw_car(position):
     glColor3f(0.0, 0.0, 0.4)  # Warna abu-abu gelap untuk pintu
     glBegin(GL_QUADS)
     glVertex2f(x + 0.05 * scale, y + 0.15 * scale)  # Posisi kiri bawah pintu
-    glVertex2f(x + 0.25 * scale, y + 0.15 * scale)  # Posisi kanan bawah pintu
-    glVertex2f(x + 0.25 * scale, y + 0.35 * scale)  # Posisi kanan atas pintu
-    glVertex2f(x + 0.05 * scale, y + 0.35 * scale)  # Posisi kiri atas pintu
+    glVertex2f(x + 0.1 * scale, y + 0.15 * scale)  # Posisi kanan bawah pintu
+    glVertex2f(x + 0.1 * scale, y + 0.3 * scale)  # Posisi kanan atas pintu
+    glVertex2f(x + 0.05 * scale, y + 0.3 * scale)  # Posisi kiri atas pintu
     glEnd()
+    
+    
 car_position = {"x": -1.2, "y": -0.55, "scale": 2.0}
 car_speed = 0.005
 
@@ -220,4 +222,5 @@ while True:
             quit()
 
     draw()
+    
     pygame.time.wait(10)
