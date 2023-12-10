@@ -1,10 +1,9 @@
-import pygame
-from pygame.locals import *
-from OpenGL.GL import *
-from OpenGL.GLUT import *
-from math import cos, sin, pi
-import time
-
+import pygame  # Import modul pygame untuk pengolahan game
+from pygame.locals import *  # Import konstanta pygame
+from OpenGL.GL import *  # Import fungsi OpenGL
+from OpenGL.GLUT import *  # Import GLUT (Toolkit Utilitas OpenGL)
+from math import cos, sin, pi  # Import fungsi matematika cos, sin, dan pi
+import time  # Import modul time untuk mengukur waktu
 
 # Inisialisasi Pygame di bagian awal
 pygame.init()
@@ -41,14 +40,14 @@ def draw_grass():
     glEnd()
 
 def draw_sun(rotation_angle):
-    glColor3f(1.0, 1.0, 0.0)  # Yellow color for the sun
+    glColor3f(1.0, 1.0, 0.0)  # Warna kuning untuk matahari
 
-    glPushMatrix()  # Save the current matrix
-    glRotatef(rotation_angle, 0.0, 0.0, 1.0)  # Rotate around the Z-axis
+    glPushMatrix()  # Simpan matriks saat ini
+    glRotatef(rotation_angle, 0.0, 0.0, 1.0)  # Putar sekitar sumbu Z
 
     glBegin(GL_TRIANGLE_FAN)
-    glVertex2f(-0.85, 0.85)  # Center coordinates of the sun
-    num_segments = 50  # Reduce the number of segments
+    glVertex2f(-0.85, 0.85)  # Koordinat pusat matahari
+    num_segments = 50  # Kurangi jumlah segmen
     radius = 0.1
 
     for i in range(num_segments + 1):
@@ -59,7 +58,7 @@ def draw_sun(rotation_angle):
 
     glEnd()
 
-    glColor3f(1.0, 1.0, 0.0)  # Yellow color for sun rays
+    glColor3f(1.0, 1.0, 0.0)  # Warna kuning untuk sinar matahari
     glLineWidth(2.0)
 
     glBegin(GL_LINES)
@@ -73,7 +72,7 @@ def draw_sun(rotation_angle):
         glVertex2f(x2, y2)
     glEnd()
 
-    glPopMatrix()  # Restore the previous matrix
+    glPopMatrix()  # Kembalikan matriks sebelumnya
 
 def draw_road():
     glColor3f(0.4, 0.4, 0.4)  # Warna abu-abu untuk jalan
@@ -96,7 +95,6 @@ def draw_road():
             glVertex2f(-1 + i * segment_length, -0.4)  # Koordinat awal garis
             glVertex2f(-1 + (i + 1) * segment_length, -0.4)  # Koordinat akhir garis
     glEnd()
-    
 
 def draw_cloud(position):
     x, y, scale = position["x"], position["y"], position["scale"]
@@ -123,7 +121,7 @@ def draw_cloud(position):
 
 def draw_car(position):
     x, y, scale = position["x"], position["y"], position["scale"]
-    glColor3f(1.0, 0.0, 0.0)  # Warna abu-abu gelap untuk mobil
+    glColor3f(1.0, 0.0, 0.0)  # Warna merah untuk mobil
 
     # Badan mobil
     glBegin(GL_QUADS)
@@ -142,7 +140,7 @@ def draw_car(position):
         glBegin(GL_TRIANGLE_FAN)
         glVertex2f(wheel_position[0], wheel_position[1])  # Pusat lingkaran roda
 
-        for i in range(num_segments+1):
+        for i in range(num_segments + 1):
             theta = 2.0 * pi * i / num_segments
             x_wheel = wheel_position[0] + radius * cos(theta)
             y_wheel = wheel_position[1] + radius * sin(theta)
@@ -169,8 +167,7 @@ def draw_car(position):
     
     
 car_position = {"x": -1.2, "y": -0.55, "scale": 2.0}
-car_speed = 0.005
-
+car_speed = 0.015
     
 def draw_grass_with_snow():
     # Draw the green grass
@@ -204,11 +201,26 @@ def draw_car_shadow(position):
     glEnd()
     
 def draw():
+    """
+    Fungsi ini digunakan untuk menggambar seluruh adegan pada layar.
+    Setiap elemen seperti langit, matahari, rumput, jalan, mobil, bayangan mobil,
+    salju, dan awan akan diatur dan digambar dengan menggunakan OpenGL dan Pygame.
+
+    Parameters:
+    - Tidak ada parameter yang diperlukan.
+
+    Returns:
+    - Tidak ada nilai yang dikembalikan.
+    """
+
+    # Bersihkan buffer warna dan buffer kedalaman
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+    # Set matriks tampilan menjadi matriks identitas
     glLoadIdentity()
 
-    # Gambar langit
-    glColor3f(1.0, 0.498, 0.314)  # Orange-red color for sunset
+    # Gambar langit dengan warna oranye-merah untuk matahari terbenam
+    glColor3f(1.0, 0.498, 0.314)
     glBegin(GL_QUADS)
     glVertex2f(-1, -1)
     glVertex2f(1, -1)
@@ -216,41 +228,54 @@ def draw():
     glVertex2f(-1, 1)
     glEnd()
 
-    draw_sun(rotation_angle)  # Pass the rotation_angle to draw_sun
+    # Panggil fungsi draw_sun dengan melewatkan rotation_angle
+    draw_sun(rotation_angle)
+
     # Gambar rumput
     draw_grass()
-    
+
     # Gambar jalan
     draw_road()
+
+    # Gambar rumput dengan efek salju
     draw_grass_with_snow()
-    # Draw car shadow
+
+    # Gambar bayangan mobil pada posisi tertentu
     draw_car_shadow(car_position)
+
+    # Gambar mobil pada posisi tertentu
     draw_car(car_position)
 
-    # Update the car's position
+    # Perbarui posisi mobil
     car_position["x"] += car_speed
 
-    # Reset car's position if it goes beyond the right edge of the screen
+    # Reset posisi mobil jika melewati batas kanan layar
     if car_position["x"] > 1.2:
-        car_position["x"] = -1.2    
-    # Gambar salju
+        car_position["x"] = -1.2
+
+    # Gambar setiap butir salju pada posisi tertentu
     for snow_position in snow_positions:
         draw_snowflake(snow_position)
 
     # Perbarui posisi salju
     for snow_position in snow_positions:
-        snow_position["y"] -= 0.001  # Ubah nilai ini sesuai kecepatan yang Anda inginkan
-    global cloud_positions
-    # Gambar awan
+        snow_position["y"] -= 0.001  # Sesuaikan nilai ini sesuai kecepatan yang diinginkan
+
+    # Gambar awan dengan animasi scaling
     current_time = time.time()
-    scaling_factor = (1 + sin(current_time)) * 0.2 + 0.8  # Faktor untuk animasi scale
+    scaling_factor = (1 + sin(current_time)) * 0.2 + 0.8
+
+    # Terapkan scaling pada setiap posisi awan
     for cloud_position in cloud_positions:
         cloud_position["scale"] = scaling_factor * cloud_position["original_scale"]
 
+    # Gambar awan pada posisi dan skala tertentu
     for cloud_position in cloud_positions:
         draw_cloud(cloud_position)
 
+    # Tampilkan hasil gambar ke layar
     pygame.display.flip()
+    
 original_cloud_positions = [
     {"x": -0.5, "y": 0.8, "original_scale": 0.3},
     {"x": 0.0, "y": 0.9, "original_scale": 0.9},
@@ -261,7 +286,7 @@ original_cloud_positions = [
 ]
 cloud_positions = original_cloud_positions.copy()
 
-rotation_angle = 0.0  # Initial rotation angle
+rotation_angle = 0.0  # Sudut rotasi awal
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -269,6 +294,6 @@ while True:
             quit()
 
     draw()
-    rotation_angle += -0.1  # Adjust the rotation speed as needed
+    rotation_angle += -0.1  # Sesuaikan kecepatan rotasi sesuai kebutuhan
 
     pygame.time.wait(10)
