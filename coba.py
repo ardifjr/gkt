@@ -3,6 +3,8 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from math import cos, sin, pi
+import time
+
 
 # Inisialisasi Pygame di bagian awal
 pygame.init()
@@ -87,21 +89,29 @@ def draw_road():
             glVertex2f(-1 + (i + 1) * segment_length, -0.4)  # Koordinat akhir garis
     glEnd()
     
+
 def draw_cloud(position):
     x, y, scale = position["x"], position["y"], position["scale"]
     glColor3f(1.0, 1.0, 1.0)  # Warna putih untuk awan
-    glBegin(GL_TRIANGLE_FAN)
-    glVertex2f(x, y)  # Titik tengah awan
-    num_segments = 100  # Jumlah segmen untuk awan
-
-    for i in range(num_segments):
-        angle = 2.0 * pi * i / num_segments
-        cloud_radius = 0.1 * scale  # Ukuran awan
-        cloud_x = x + cloud_radius * cos(angle)  # Pergerakan awan ke kanan
-        cloud_y = y + 0.05 * scale * sin(angle)
-        glVertex2f(cloud_x, cloud_y)
-
-    glEnd()
+    
+    num_circles = 10  # Jumlah lingkaran kecil untuk membentuk awan
+    circle_radius = 0.08  # Ukuran radius lingkaran kecil
+    
+    for i in range(num_circles):
+        circle_x = x + (i * 0.1 * scale)  # Atur jarak antar lingkaran kecil
+        circle_y = y
+        
+        glBegin(GL_TRIANGLE_FAN)
+        glVertex2f(circle_x, circle_y)  # Pusat lingkaran kecil
+        
+        num_segments = 50  # Jumlah segmen untuk lingkaran kecil
+        for j in range(num_segments + 1):
+            angle = 2.0 * pi * j / num_segments
+            x_circle = circle_x + circle_radius * cos(angle) * scale
+            y_circle = circle_y + circle_radius * sin(angle) * scale
+            
+            glVertex2f(x_circle, y_circle)  # Vertex untuk lingkaran kecil
+        glEnd()
 
 def draw_car(position):
     x, y, scale = position["x"], position["y"], position["scale"]
@@ -117,11 +127,19 @@ def draw_car(position):
 
     # Roda mobil
     glColor3f(0.0, 0.0, 0.0)  # Warna hitam untuk roda
-    glPointSize(37.0)  # Ukuran titik roda
-    glBegin(GL_POINTS)
-    glVertex2f(x - 0.3 * scale, y + 0.1 * scale)  # Posisi roda kiri bawah
-    glVertex2f(x + 0.3 * scale, y + 0.1 * scale)  # Posisi roda kanan bawah
-    glEnd()
+    num_segments = 50  # Jumlah segmen untuk lingkaran
+
+    for wheel_position in [(x - 0.3 * scale, y + 0.1 * scale), (x + 0.3 * scale, y + 0.1 * scale)]:
+        radius = 0.037 * scale  
+        glBegin(GL_TRIANGLE_FAN)
+        glVertex2f(wheel_position[0], wheel_position[1])  # Pusat lingkaran roda
+
+        for i in range(num_segments+1):
+            theta = 2.0 * pi * i / num_segments
+            x_wheel = wheel_position[0] + radius * cos(theta)
+            y_wheel = wheel_position[1] + radius * sin(theta)
+            glVertex2f(x_wheel, y_wheel)
+        glEnd()
 
     # Jendela
     glColor3f(0.7, 0.9, 1.0)  # Warna biru muda untuk jendela
@@ -200,20 +218,26 @@ def draw():
     # Perbarui posisi salju
     for snow_position in snow_positions:
         snow_position["y"] -= 0.001  # Ubah nilai ini sesuai kecepatan yang Anda inginkan
-
+    global cloud_positions
     # Gambar awan
-    cloud_positions = [
-        {"x": -0.5, "y": 0.8, "scale": 0.8},
-        {"x": 0.0, "y": 0.9, "scale": 1.2},
-        {"x": 0.7, "y": 0.7, "scale": 0.9},
-        {"x": -0.8, "y": 0.6, "scale": 1.0},
-        {"x": 0.4, "y": 0.5, "scale": 0.7},
-        {"x": 1.1, "y": 0.5, "scale": 1.2}
-    ]
+    current_time = time.time()
+    scaling_factor = (1 + sin(current_time)) * 0.2 + 0.8  # Faktor untuk animasi scale
+    for cloud_position in cloud_positions:
+        cloud_position["scale"] = scaling_factor * cloud_position["original_scale"]
+
     for cloud_position in cloud_positions:
         draw_cloud(cloud_position)
 
     pygame.display.flip()
+original_cloud_positions = [
+    {"x": -0.5, "y": 0.8, "original_scale": 0.8},
+    {"x": 0.0, "y": 0.9, "original_scale": 1.2},
+    {"x": 0.7, "y": 0.7, "original_scale": 0.9},
+    {"x": -0.8, "y": 0.6, "original_scale": 1.0},
+    {"x": 0.4, "y": 0.5, "original_scale": 0.7},
+    {"x": 1.1, "y": 0.5, "original_scale": 1.2}
+]
+cloud_positions = original_cloud_positions.copy()
 
 while True:
     for event in pygame.event.get():
