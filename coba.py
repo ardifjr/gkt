@@ -4,6 +4,7 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from math import cos, sin, pi
 
+# Inisialisasi Pygame di bagian awal
 pygame.init()
 display = (800, 600)
 pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
@@ -102,50 +103,72 @@ def draw_cloud(position):
 
     glEnd()
 
-def draw_truck(position):
+def draw_car(position):
     x, y, scale = position["x"], position["y"], position["scale"]
-    glColor3f(0.1, 0.1, 0.1)  # Warna abu-abu gelap untuk truk
+    glColor3f(0.3, 0.3, 0.3)  # Warna abu-abu gelap untuk mobil
 
-    # Badan truk
+    # Badan mobil
     glBegin(GL_QUADS)
-    glVertex2f(x - 0.3 * scale, y + 0.1 * scale)  # Posisi kiri bawah
-    glVertex2f(x + 0.3 * scale, y + 0.1 * scale)  # Posisi kanan bawah
-    glVertex2f(x + 0.3 * scale, y + 0.3 * scale)  # Posisi kanan atas
-    glVertex2f(x - 0.3 * scale, y + 0.3 * scale)  # Posisi kiri atas
+    glVertex2f(x - 0.35 * scale, y + 0.15 * scale)  # Posisi kiri bawah
+    glVertex2f(x + 0.35 * scale, y + 0.15 * scale)  # Posisi kanan bawah
+    glVertex2f(x + 0.35 * scale, y + 0.35 * scale)  # Posisi kanan atas
+    glVertex2f(x - 0.35 * scale, y + 0.35 * scale)  # Posisi kiri atas
     glEnd()
 
-    # Roda truk
+    # Roda mobil
     glColor3f(0.0, 0.0, 0.0)  # Warna hitam untuk roda
-    glPointSize(20.0)  # Ukuran titik roda
+    glPointSize(37.0)  # Ukuran titik roda
     glBegin(GL_POINTS)
-    glVertex2f(x - 0.25 * scale, y + 0.1 * scale)  # Posisi roda kiri bawah
-    glVertex2f(x + 0.25 * scale, y + 0.1 * scale)  # Posisi roda kanan bawah
+    glVertex2f(x - 0.3 * scale, y + 0.1 * scale)  # Posisi roda kiri bawah
+    glVertex2f(x + 0.3 * scale, y + 0.1 * scale)  # Posisi roda kanan bawah
     glEnd()
 
     # Jendela
     glColor3f(0.7, 0.9, 1.0)  # Warna biru muda untuk jendela
     glBegin(GL_QUADS)
-    glVertex2f(x - 0.15 * scale, y + 0.15 * scale)  # Posisi kiri bawah jendela
-    glVertex2f(x + 0.15 * scale, y + 0.15 * scale)  # Posisi kanan bawah jendela
-    glVertex2f(x + 0.15 * scale, y + 0.25 * scale)  # Posisi kanan atas jendela
-    glVertex2f(x - 0.15 * scale, y + 0.25 * scale)  # Posisi kiri atas jendela
+    glVertex2f(x - 0.2 * scale, y + 0.2 * scale)  # Posisi kiri bawah jendela
+    glVertex2f(x + 0.2 * scale, y + 0.2 * scale)  # Posisi kanan bawah jendela
+    glVertex2f(x + 0.2 * scale, y + 0.3 * scale)  # Posisi kanan atas jendela
+    glVertex2f(x - 0.2 * scale, y + 0.3 * scale)  # Posisi kiri atas jendela
     glEnd()
 
     # Pintu
-    glColor3f(0.4, 0.4, 0.4)  # Warna abu-abu gelap untuk pintu
+    glColor3f(0.0, 0.0, 0.4)  # Warna abu-abu gelap untuk pintu
     glBegin(GL_QUADS)
-    glVertex2f(x - 0.05 * scale, y + 0.1 * scale)  # Posisi kiri bawah pintu
-    glVertex2f(x + 0.05 * scale, y + 0.1 * scale)  # Posisi kanan bawah pintu
-    glVertex2f(x + 0.05 * scale, y + 0.3 * scale)  # Posisi kanan atas pintu
-    glVertex2f(x - 0.05 * scale, y + 0.3 * scale)  # Posisi kiri atas pintu
+    glVertex2f(x + 0.05 * scale, y + 0.15 * scale)  # Posisi kiri bawah pintu
+    glVertex2f(x + 0.25 * scale, y + 0.15 * scale)  # Posisi kanan bawah pintu
+    glVertex2f(x + 0.25 * scale, y + 0.35 * scale)  # Posisi kanan atas pintu
+    glVertex2f(x + 0.05 * scale, y + 0.35 * scale)  # Posisi kiri atas pintu
+    glEnd()
+car_position = {"x": -1.2, "y": -0.55, "scale": 2.0}
+car_speed = 0.005
+
+    
+def draw_grass_with_snow():
+    # Draw the green grass
+    glColor3f(0.0, 0.8, 0.0)  # Green color for grass
+    glBegin(GL_QUADS)
+    glVertex2f(-1, -0.6)  # Bottom position of grass
+    glVertex2f(1, -0.6)
+    glVertex2f(1, -1)
+    glVertex2f(-1, -1)
     glEnd()
 
+    # Draw white snow piles on top of the grass
+    glColor3f(1.0, 1.0, 1.0)  # White color for snow
+    for snow_position in snow_positions:
+        x, y, scale = snow_position["x"], snow_position["y"], snow_position["scale"]
+        glBegin(GL_TRIANGLES)
+        glVertex2f(x - 0.05 * scale, y - 0.6 * scale)  # Left bottom of snow pile
+        glVertex2f(x + 0.05 * scale, y - 0.6 * scale)  # Right bottom of snow pile
+        glVertex2f(x, y - 0.5 * scale)  # Top of snow pile
+        glEnd()
 def draw():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
     # Gambar langit
-    glColor3f(0.529, 0.807, 0.98)  # Warna biru langit
+    glColor3f(1.0, 0.498, 0.314)  # Orange-red color for sunset
     glBegin(GL_QUADS)
     glVertex2f(-1, -1)
     glVertex2f(1, -1)
@@ -156,12 +179,18 @@ def draw():
     draw_sun()
     # Gambar rumput
     draw_grass()
-
+    
     # Gambar jalan
     draw_road()
+    draw_grass_with_snow()
+    draw_car(car_position)
 
-    draw_truck({"x": 0.0, "y": -0.55, "scale": 2.0})
-    
+    # Update the car's position
+    car_position["x"] += car_speed
+
+    # Reset car's position if it goes beyond the right edge of the screen
+    if car_position["x"] > 1.2:
+        car_position["x"] = -1.2    
     # Gambar salju
     for snow_position in snow_positions:
         draw_snowflake(snow_position)
