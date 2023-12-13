@@ -10,8 +10,6 @@ pygame.init()
 display = (800, 600)
 pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
 
-# Set orthographic projection
-glOrtho(-1, 1, -1, 1, -1, 1)
 
 snow_positions = [
     {"x": -0.7, "y": 0.9, "scale": 0.25},
@@ -22,21 +20,24 @@ snow_positions = [
     {"x": 1.0, "y": 0.4, "scale": 0.29}
 ]
 
+
+car_position = {"x": -1.2, "y": -0.55, "scale": 2.0}
+car_speed = 0.015
+original_cloud_positions = [
+    {"x": -0.5, "y": 0.8, "original_scale": 0.3},
+    {"x": 0.0, "y": 0.9, "original_scale": 0.9},
+    {"x": 0.7, "y": 0.7, "original_scale": 0.9},
+    {"x": -0.8, "y": 0.6, "original_scale": 1.0},
+    {"x": 0.4, "y": 0.5, "original_scale": 0.7},
+    {"x": 1.1, "y": 0.5, "original_scale": 1.2}
+]
+
 def draw_snowflake(position):
     x, y, scale = position["x"], position["y"], position["scale"]
     glColor3f(1.0, 1.0, 1.0)  # Warna putih untuk salju
     glPointSize(5.0)  # Ubah ukuran titik salju menjadi lebih besar
     glBegin(GL_POINTS)
     glVertex2f(x, y)
-    glEnd()
-
-def draw_grass():
-    glColor3f(0.0, 0.8, 0.0)  # Warna hijau untuk rumput
-    glBegin(GL_QUADS)
-    glVertex2f(-1, -0.6)  # Ubah posisi bawah rumput
-    glVertex2f(1, -0.6)
-    glVertex2f(1, -1)
-    glVertex2f(-1, -1)
     glEnd()
 
 def draw_sun(rotation_angle):
@@ -47,7 +48,7 @@ def draw_sun(rotation_angle):
 
     glBegin(GL_TRIANGLE_FAN)
     glVertex2f(-0.85, 0.85)  # Koordinat pusat matahari
-    num_segments = 50  # Kurangi jumlah segmen
+    num_segments = 50  # Kurangi jumlah segmen ( sinar )
     radius = 0.1
 
     for i in range(num_segments + 1):
@@ -121,8 +122,8 @@ def draw_cloud(position):
 
 def draw_car(position):
     x, y, scale = position["x"], position["y"], position["scale"]
+    
     glColor3f(1.0, 0.0, 0.0)  # Warna merah untuk mobil
-
     # Badan mobil
     glBegin(GL_QUADS)
     glVertex2f(x - 0.40 * scale, y + 0.15 * scale)  # Posisi kiri bawah
@@ -131,21 +132,20 @@ def draw_car(position):
     glVertex2f(x - 0.35 * scale, y + 0.1 * scale)  # Posisi kiri atas
     glEnd()
 
-    # Roda mobil
-    glColor3f(0.0, 0.0, 0.0)  # Warna hitam untuk roda
-    num_segments = 50  # Jumlah segmen untuk lingkaran
-
+   # Roda mobil
+    glColor3f(0.0, 0.0, 0.0)  # Mengatur warna hitam untuk roda
+    num_segments = 50  # Jumlah segmen untuk lingkaran roda
     for wheel_position in [(x - 0.3 * scale, y + 0.1 * scale), (x + 0.3 * scale, y + 0.1 * scale)]:
-        radius = 0.037 * scale  
+        radius = 0.037 * scale  # Menetapkan radius roda dengan faktor skala
         glBegin(GL_TRIANGLE_FAN)
-        glVertex2f(wheel_position[0], wheel_position[1])  # Pusat lingkaran roda
+        glVertex2f(wheel_position[0], wheel_position[1])  # Mengatur pusat lingkaran roda
 
         for i in range(num_segments + 1):
             theta = 2.0 * pi * i / num_segments
-            x_wheel = wheel_position[0] + radius * cos(theta)
-            y_wheel = wheel_position[1] + radius * sin(theta)
-            glVertex2f(x_wheel, y_wheel)
-        glEnd()
+            x_wheel = wheel_position[0] + radius * cos(theta)  # Menghitung koordinat x roda
+            y_wheel = wheel_position[1] + radius * sin(theta)  # Menghitung koordinat y roda
+            glVertex2f(x_wheel, y_wheel)  # Menetapkan vertex untuk menggambar lingkaran roda
+        glEnd()  # Selesai menggambar lingkaran roda
 
     # Jendela
     glColor3f(0.7, 0.9, 1.0)  # Warna biru muda untuk jendela
@@ -165,9 +165,6 @@ def draw_car(position):
     glVertex2f(x + 0.05 * scale, y + 0.3 * scale)  # Posisi kiri atas pintu
     glEnd()
     
-    
-car_position = {"x": -1.2, "y": -0.55, "scale": 2.0}
-car_speed = 0.015
     
 def draw_grass_with_snow():
     # Draw the green grass
@@ -205,12 +202,6 @@ def draw():
     Fungsi ini digunakan untuk menggambar seluruh adegan pada layar.
     Setiap elemen seperti langit, matahari, rumput, jalan, mobil, bayangan mobil,
     salju, dan awan akan diatur dan digambar dengan menggunakan OpenGL dan Pygame.
-
-    Parameters:
-    - Tidak ada parameter yang diperlukan.
-
-    Returns:
-    - Tidak ada nilai yang dikembalikan.
     """
 
     # Bersihkan buffer warna dan buffer kedalaman
@@ -230,9 +221,6 @@ def draw():
 
     # Panggil fungsi draw_sun dengan melewatkan rotation_angle
     draw_sun(rotation_angle)
-
-    # Gambar rumput
-    draw_grass()
 
     # Gambar jalan
     draw_road()
@@ -275,15 +263,7 @@ def draw():
 
     # Tampilkan hasil gambar ke layar
     pygame.display.flip()
-    
-original_cloud_positions = [
-    {"x": -0.5, "y": 0.8, "original_scale": 0.3},
-    {"x": 0.0, "y": 0.9, "original_scale": 0.9},
-    {"x": 0.7, "y": 0.7, "original_scale": 0.9},
-    {"x": -0.8, "y": 0.6, "original_scale": 1.0},
-    {"x": 0.4, "y": 0.5, "original_scale": 0.7},
-    {"x": 1.1, "y": 0.5, "original_scale": 1.2}
-]
+
 cloud_positions = original_cloud_positions.copy()
 
 rotation_angle = 0.0  # Sudut rotasi awal
