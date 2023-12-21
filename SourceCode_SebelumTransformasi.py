@@ -17,7 +17,6 @@ snow_positions = [
     {"x": 1.0, "y": 0.4, "scale": 0.29}
 ]
 car_position = {"x": -1.2, "y": -0.55, "scale": 2.0}
-car_speed = 0.015
 original_cloud_positions = [
     {"x": -0.5, "y": 0.8, "original_scale": 0.3},
     {"x": 0.0, "y": 0.9, "original_scale": 0.9},
@@ -178,15 +177,10 @@ def draw():
     draw_grass_with_snow()
     draw_car_shadow(car_position)
     draw_car(car_position)
-    car_position["x"] += car_speed
-    if car_position["x"] > 1.2:
-        car_position["x"] = -1.2
     for snow_position in snow_positions:
         draw_snowflake(snow_position)
-    current_time = time.time()
-    scaling_factor = (1 + sin(current_time)) * 0.2 + 0.8
     for cloud_position in original_cloud_positions:
-        cloud_position["scale"] = scaling_factor * cloud_position["original_scale"]
+        cloud_position["scale"] = cloud_position["original_scale"]
     for cloud_position in original_cloud_positions:
         draw_cloud(cloud_position)
     pygame.display.flip()
@@ -199,5 +193,4 @@ while True:
             pygame.quit()
             quit()
     draw()
-    rotation_angle += -0.1
     pygame.time.wait(10)
